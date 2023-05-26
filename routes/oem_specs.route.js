@@ -5,7 +5,7 @@ const oemspecsRoute = express.Router()
 oemspecsRoute.get("/",async(req,res)=>{
     const {q} = req.query
     try{
-        const data = await OEM_Data.find({"name":{$regex:".*"+q+".*",$options:"i"}}).select("name image _id").exec()
+        const data = await OEM_Data.find({"name":{$regex:".*"+q+".*",$options:"i"}}).select("_id max_speed mfg_year model og_price mileage power")
         res.status(200).send(data)
     }catch(err){
         res.status(400).send("cannot find the data")

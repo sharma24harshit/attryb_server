@@ -2,6 +2,7 @@ const express = require("express")
 const MarketPlace = require("../model/Marketplace_Inventory.model")
 const  marketplaceRoute=express.Router()
 
+//-------------------------- POST car data  ----------------------------------------------//
 marketplaceRoute.post("/add",async(req,res)=>{
     try{
         const newCar = new MarketPlace(req.body)
@@ -11,6 +12,7 @@ marketplaceRoute.post("/add",async(req,res)=>{
         res.status(400).send("someting went wrong")
     }
 })
+//-------------------------- GET all cars data  ----------------------------------------------//
 marketplaceRoute.get("/",async(req,res)=>{
     try{    
         const allData = await MarketPlace.find().populate({
@@ -20,6 +22,29 @@ marketplaceRoute.get("/",async(req,res)=>{
             path:"car_data",
         })
         res.status(200).send(allData)
+    }catch(err){
+        res.status(400).send("someting went wrong")
+    }
+})
+//-------------------------- DELETE car data  ----------------------------------------------//
+marketplaceRoute.delete("/:id",async(req,res)=>{
+    const {id} = req.params
+   
+    try{    
+        const findData = await MarketPlace.findById({"_id":id}) 
+        
+        if(findData){
+            if(findData.author == req.body.author){
+                const DeleteData = await MarketPlace.findByIdAndDelete({_id:id});
+                res.status(200).send("Deleted Successfully")
+            }
+            else{
+                res.status(400).send("Not Authorized to delete")
+            }
+        }
+        else{
+            res.status(400).send("Data not found")
+        }
     }catch(err){
         res.status(400).send("someting went wrong")
     }
